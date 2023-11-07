@@ -45,6 +45,7 @@ const Login = ({ switchToRegister, closeModal }) => {
     try {
       apiClient.get("/sanctum/csrf-cookie").then((res)=>{
         apiClient.post("/login", formData).then(({data}) => {
+          console.log(data);
           Swal.fire({
             position: "center",
             icon: "success",

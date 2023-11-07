@@ -101,7 +101,7 @@ export const Header = ({ navActive }) => {
           {isLogin ? (
             <div className="flex items-center justify-center">
               <p className=" h-full text-[15px] text-white">
-                Xin chào, {JSON.parse(userInfo).name}
+                {/* Xin chào, {JSON.parse(userInfo).name} */}
               </p>
               <p className="text-white mx-3"> | </p>
               <span
