@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { AiFillEyeInvisible, AiFillEye } from "react-icons/ai";
-import axios from "axios";
+import { AiFillEyeInvisible, AiFillEye, AiOutlineClose } from "react-icons/ai";
 import Swal from "sweetalert2";
-import apiClient from "../../services/api";
+import apiClient from "../../server";
+import { useDispatch } from "react-redux";
+import { userAction } from "../../redux/slices/userSlice";
 const Login = ({ switchToRegister, closeModal }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const togglePass = () => {
     setOpen(!open);
@@ -11,7 +13,6 @@ const Login = ({ switchToRegister, closeModal }) => {
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    userName: "",
     email: "",
     password: "",
   });
@@ -23,7 +24,7 @@ const Login = ({ switchToRegister, closeModal }) => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit =  (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
     const validationErrors = {};
@@ -40,56 +41,62 @@ const Login = ({ switchToRegister, closeModal }) => {
       validationErrors.password = "Password tối thiệu có 6 ký tự !";
     }
     setErrors(validationErrors);
+
     try {
-      apiClient.get("/sanctum/csrf-cookie").then((response) => {
-        const res = apiClient.post(
-          "/login",
-          formData
-        );
-        Swal.fire({
-          position: "center",
-          icon: "success",
-          title: res.data.message,
-          showConfirmButton: true,
-          timer: 2000,
-          confirmButtonText: "OK",
-        }).then(() => {
-          setLoading(false);
-          closeModal();
+      apiClient.get("/sanctum/csrf-cookie").then((res)=>{
+        apiClient.post("/login", formData).then(({data}) => {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: data.message,
+            showConfirmButton: true,
+            timer: 2000,
+            confirmButtonText: "OK",
+          }).then(() => {
+            const infodata = {
+              token: data.token,
+              userInfo: data.user
+            }
+            dispatch(userAction.setLoginInfo(infodata))
+            setLoading(false);
+            closeModal();
+          });
+          console.log(data);
+          // if (data.status === 400) {
+          //   Swal.fire({
+          //     position: "center",
+          //     icon: "error",
+          //     title: data.message,
+          //     showConfirmButton: true,
+          //     timer: 2000,
+          //     confirmButtonText: "OK",
+          //   }).then(() => {
+          //     setLoading(false);
+          //     closeModal();
+          //   });
+          // }
         });
-      });
+      })
+     
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        Swal.fire({
-          position: "center",
-          icon: "error",
-          title: error.response.data.message,
-          showConfirmButton: true,
-          timer: 2000,
-          confirmButtonText: "OK",
-        }).then(() => {
-          setLoading(false);
-        });
-      } else {
-        console.error(error);
-        setLoading(false);
-      }
+      console.error(error);
+      setLoading(false);
     }
   };
   return (
     <div className="p-5 border rounded-lg shadow-md bg-white">
       <button
-        className="text-black text-xl place-self-end"
+        className="text-black text-xl flex justify-end w-full"
         onClick={closeModal}
       >
-        X
+        <AiOutlineClose size={25}/>
       </button>
       <h2 className="font-extrabold text-center text-3xl text-pink-500 uppercase ">
         Đăng nhập
       </h2>
       <form className="mt-8 flex flex-col mb-5" onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="text-base font-medium shadow-black mb-2">
+          <label className="text-base font-medium shadow-black mb-2 after:content-['*'] after:ml-0.5 after:text-red-500">
             Email
           </label>
           <input
@@ -106,7 +113,7 @@ const Login = ({ switchToRegister, closeModal }) => {
           )}
         </div>
         <div className="mb-4">
-          <label className="text-base font-medium shadow-black mb-2">
+          <label className="text-base font-medium shadow-black mb-2 after:content-['*'] after:ml-0.5 after:text-red-500">
             Mật Khẩu
           </label>
           <div className="relative">

@@ -19,7 +19,17 @@ module.exports = {
         'sm': '0.4rem',
         'full': '9999px',
       },
+      animation: {
+        'slideDown': 'slideDown .3s linear',
+      },
+      keyframes: {
+        slideDown: {
+          '0%': { transform: 'translateY(-100%)' },
+          '100%': { transform: 'translateY(0%)' },
+        }
+      }
     },
+    
   },
   plugins: [],
 }
