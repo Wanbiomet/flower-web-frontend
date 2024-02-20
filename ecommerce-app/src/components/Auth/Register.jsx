@@ -43,26 +43,26 @@ const Register = ({ switchToLogin, closeModal }) => {
     }
     setErrors(validationErrors);
     try {
-      apiClient.get("/sanctum/csrf-cookie").then((res) => {
-        apiClient.post("/register", formData).then(({ data }) => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: data.message,
-            showConfirmButton: true,
-            timer: 2000,
-            confirmButtonText: "OK",
-          }).then(() => {
-            const infodata = {
-              token: data.token,
-              userInfo: data.user,
-            };
-            dispatch(userAction.setLoginInfo(infodata));
-            setLoading(false);
-            closeModal();
-          });
+     
+      apiClient.post("/register", formData).then(({ data }) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: data.message,
+          showConfirmButton: true,
+          timer: 2000,
+          confirmButtonText: "OK",
+        }).then(() => {
+          const infodata = {
+            token: data.token,
+            userInfo: data.user,
+          };
+          dispatch(userAction.setLoginInfo(infodata));
+          setLoading(false);
+          closeModal();
         });
       });
+
     } catch (error) {
       if (error.response && error.response.status === 400) {
         Swal.fire({
@@ -87,7 +87,7 @@ const Register = ({ switchToLogin, closeModal }) => {
   };
 
   return (
-    <div className="p-5 border rounded-lg shadow-md bg-white">
+    <div className="p-5 border rounded-lg shadow-md bg-white ">
       <button
         className="text-black text-xl flex justify-end w-full"
         onClick={closeModal}
@@ -169,7 +169,7 @@ const Register = ({ switchToLogin, closeModal }) => {
       </form>
       <span className="mt-4 text-base font-medium text-gray-600">
         Bạn đã có tài khoản?{" "}
-        <a href="#" className="text-pink-500" onClick={switchToLogin}>
+        <a href="/" className="text-pink-500" onClick={switchToLogin}>
           Đăng nhập ngay
         </a>
       </span>

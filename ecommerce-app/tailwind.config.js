@@ -12,7 +12,7 @@ module.exports = {
         "1100px": "1110px",
         "800px": "800px",
         "1300px": "1300px",
-        "400px": "400px"
+        "500px": "500px"
       },
       borderRadius: {
         'none': '0',

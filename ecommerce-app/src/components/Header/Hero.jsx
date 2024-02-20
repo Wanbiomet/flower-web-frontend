@@ -28,7 +28,7 @@ const Hero = () => {
         height: "100%",
       }}
     >
-      <div className="absolute top-[50%] translate-x-0 translate-y-[-50%] left-16 w-11/12 mx-auto 800px:w-[60%]">
+      <div className="absolute top-[50%] translate-x-0 translate-y-[-50%] left-16 right-16 w-auto mx-auto 800px:w-[55%]">
         <h1 className="text-[35px] leading-[1.2] 800px:text-[60px] font-[500] capitalize py-4">
           Hoa Tươi
         </h1>
@@ -39,7 +39,7 @@ const Hero = () => {
           Mua hoa giá rẻ và thời gian vận chuyển nhanh
         </p>
         <a
-          href="#"
+          href="/"
           className="inline-block rounded-[5rem] bg-[#555] text-white px-5 py-2 hover:bg-[#e84393]"
         >
           Mua Ngay

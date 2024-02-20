@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import apiClient from "../../server";
 import { useDispatch } from "react-redux";
 import { userAction } from "../../redux/slices/userSlice";
+
 const Login = ({ switchToRegister, closeModal }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
@@ -27,6 +28,7 @@ const Login = ({ switchToRegister, closeModal }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
+    //Handle errors
     const validationErrors = {};
 
     if (!formData.email.trim()) {
@@ -42,43 +44,47 @@ const Login = ({ switchToRegister, closeModal }) => {
     }
     setErrors(validationErrors);
 
+    //Login
     try {
-      apiClient.get("/sanctum/csrf-cookie").then((res)=>{
-        apiClient.post("/login", formData).then(({data}) => {
-          console.log(data);
+     
+      apiClient.post("/login", formData).then(({data}) => {
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: data.message,
+          showConfirmButton: true,
+          timer: 2000,
+          confirmButtonText: "OK",
+        }).then(() => {
+          const infodata = {
+            token: data.token,
+            userInfo: data.user
+          }
+          dispatch(userAction.setLoginInfo(infodata))
+          setLoading(false);
+          closeModal();
+        });
+
+        if (data.status === 400) {
           Swal.fire({
             position: "center",
-            icon: "success",
+            icon: "error",
             title: data.message,
             showConfirmButton: true,
             timer: 2000,
             confirmButtonText: "OK",
           }).then(() => {
             const infodata = {
-              token: data.token,
-              userInfo: data.user
+              token: null,
+              userInfo: null
             }
             dispatch(userAction.setLoginInfo(infodata))
             setLoading(false);
             closeModal();
           });
-          console.log(data);
-          // if (data.status === 400) {
-          //   Swal.fire({
-          //     position: "center",
-          //     icon: "error",
-          //     title: data.message,
-          //     showConfirmButton: true,
-          //     timer: 2000,
-          //     confirmButtonText: "OK",
-          //   }).then(() => {
-          //     setLoading(false);
-          //     closeModal();
-          //   });
-          // }
-        });
-      })
-     
+        }
+      });
+
     } catch (error) {
       console.error(error);
       setLoading(false);
@@ -144,7 +150,7 @@ const Login = ({ switchToRegister, closeModal }) => {
             <input id="remember-me" type="checkbox" />
             <span className="font-medium text-base"> Nhớ thông tin</span>
           </label>
-          <a className="font-medium text-base text-pink-500 cursor-pointer">
+          <a className="font-medium text-base text-pink-500 cursor-pointer" href="/">
             {" "}
             Quên mật khẩu ?
           </a>
@@ -158,7 +164,7 @@ const Login = ({ switchToRegister, closeModal }) => {
       </form>
       <span className="mt-4 text-base font-medium text-gray-600">
         Chưa đăng ký?{" "}
-        <a href="#" className="text-pink-500" onClick={switchToRegister}>
+        <a href="/" className="text-pink-500" onClick={switchToRegister}>
           Tạo tài khoản
         </a>
       </span>

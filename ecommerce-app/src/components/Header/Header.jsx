@@ -1,8 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { FiSearch } from "react-icons/fi";
-import { AiOutlineShoppingCart, AiOutlineHeart, AiOutlineMenu, AiOutlineClose} from "react-icons/ai";
-import { FaShippingFast } from "react-icons/fa";
+import {
+  AiOutlineShoppingCart,
+  AiOutlineHeart,
+  AiOutlineMenu,
+  AiOutlineClose,
+} from "react-icons/ai";
+import { FaShippingFast, FaRegUserCircle } from "react-icons/fa";
 import Model from "../Model";
 import Login from "../Auth/Login";
 import Register from "../Auth/Register";
@@ -11,14 +16,13 @@ import Swal from "sweetalert2";
 import apiClient from "../../server";
 import { useSelector, useDispatch } from "react-redux";
 import { userAction } from "../../redux/slices/userSlice";
-import logo from "../../assets/images/icon_hoa.png"
+import logo from "../../assets/images/icon_hoa.png";
 
 export const Header = ({ navActive }) => {
   //Redux data
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.userInfo);
   const isLogin = useSelector((state) => state.user.isLogin);
-
   //UseState open menu icon
   const [isMenu, setIsMenu] = useState(false);
   //UseState Model form
@@ -88,7 +92,7 @@ export const Header = ({ navActive }) => {
 
   return (
     <>
-      <header className="w-full h-[150px] bg-white shadow-[0_0.5rem_1rem_rgba(0, 0, 0, 0.1)]">
+      <header className="hidden 800px:block w-full h-[150px] bg-white shadow-[0_0.5rem_1rem_rgba(0, 0, 0, 0.1)]">
         {/* Top Header */}
         <div className="h-[20px] items-center justify-between bg-[#f72f92] p-3 hidden 800px:flex">
           <div className="flex items-center justify-center">
@@ -101,7 +105,7 @@ export const Header = ({ navActive }) => {
           {isLogin ? (
             <div className="flex items-center justify-center">
               <p className=" h-full text-[15px] text-white">
-                {/* Xin chào, {JSON.parse(userInfo).name} */}
+                Xin chào, {userInfo.name}
               </p>
               <p className="text-white mx-3"> | </p>
               <span
@@ -164,6 +168,7 @@ export const Header = ({ navActive }) => {
                       <img
                         src={i.product_img}
                         className="h-[50px] w-[50px] mr-[10px] bg-transparent"
+                        alt="small products"
                       />
                       <div className="flex-row ">
                         <h1 className="text-[17px] font-medium hover:font-bold">
@@ -200,50 +205,117 @@ export const Header = ({ navActive }) => {
       </header>
 
       {/* Header mobile */}
-      <header className="800px:hidden bg-white w-full h-full absolute top-0 left-0">
-        {/* Logo Home */}
-        <div className="flex justify-between cursor-pointer p-3 border-b border-[#555]">
-          <Link to="/">
-            <span className="text-2xl font-bold text-pink-500">QHoaTuoi</span>
-            <img
-              className="max-w-[30px] absolute top-[-10px] right-[-2rem] bg-transparent"
-              src={logo}
-              alt="Logo Moblie"
-            />
-          </Link>
+      <header className="800px:hidden block w-full h-full top-0 left-0 z-20 overflow-y-hidden shadow-lg">
+        <div className="flex justify-between bg-white cursor-pointer p-3 border-b border-[#555]">
           {/* Menu icon */}
           <div
             onClick={() => setIsMenu(!isMenu)}
-            className="flex justify-center items-center"
+            className="flex justify-center items-center pr-2"
           >
-            {isMenu == false ? (
+            {isMenu === false ? (
               <AiOutlineMenu size={25} />
             ) : (
               <AiOutlineClose size={25} />
             )}
           </div>
-        </div>
-        {/* Serach Bar */}
-        <div className="w-full relative h-[65px] p-3">
-          <input
-            type="text"
-            name="search"
-            placeholder="Nhập để tìm kiếm"
-            value={search}
-            onChange={hanleSearch}
-            className="h-full w-full p-4 bg-[#ede3e3] rounded-sm focus:border-pink-500 "
-          />
-          <FiSearch
-            size={20}
-            className="absolute top-[1.2rem] right-[1.5rem] cursor-pointer"
-          />
+
+          {/* Logo Home */}
+          <div className="relative flex cursor-pointer">
+            <Link to="/">
+              <span className="text-2xl font-bold text-pink-500">QHoaTuoi</span>
+              <img
+                className="max-w-[30px] absolute top-[-10px] right-[-2rem] bg-transparent"
+                src={logo}
+                alt="Logo"
+              />
+            </Link>
+          </div>
+
+          {/* setting icons */}
+          <div className="flex items-center justify-center">
+            <div className="relative mx-[10px] cursor-pointer 500px:block hidden">
+              <AiOutlineShoppingCart size={30} />
+              <span className="absolute right-[-5px] top-[-5px] rounded-full bg-[#e84393] w-5 h-5 text-white text-[16px] p-0 m-0 leading-tight text-center">
+                0
+              </span>
+            </div>
+            <div className="relative mx-[10px] cursor-pointer 500px:block hidden">
+              <AiOutlineHeart size={30} />
+              <span className="absolute right-[-5px] top-[-5px] rounded-full bg-[#e84393] w-5 h-5 text-white text-[16px] p-0 m-0 leading-tight text-center">
+                0
+              </span>
+            </div>
+            {/* Logion button */}
+            {isLogin ? (
+              <div className="group">
+                <div className="flex gap-1 items-center cursor-pointer relative">
+                  <FaRegUserCircle size={30}/>
+                  <span className="text-sm">quang</span>
+                </div>
+
+                <div className="flex flex-col bg-[#F5F6FA] absolute min-w-[100px] border border-neutral-400 rounded-lg py-2 mt-2 top-[3.2rem] right-3 opacity-0 visible z-0 group-hover:visible group-hover:opacity-100 group-hover:mt-0 group-hover:z-20 transition-all duration-500">
+                  <a
+                    href="/"
+                    className="flex items-center px-4 py-2 hover:bg-blue-300"
+                  >
+                    <FaRegUserCircle />
+                    Thông tin cá nhân
+                  </a>
+                  <a
+                    href="/"
+                    className="flex items-center px-4 py-2 hover:bg-blue-300"
+                  >
+                    <box-icon
+                      name="check-circle"
+                      className="w-5 h-5 mr-1"
+                    ></box-icon>
+                    Đơn hàng
+                  </a>
+                  <a
+                    href="/"
+                    className="flex items-center px-4 py-2 hover:bg-blue-300"
+                    onClick={logout}
+                  >
+                    
+                    Đăng xuất
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div className="h-[40px] w-[100px] bg-[#e84393] p-2 ml-2 border flex justify-between items-center">
+                <span
+                  className="text-white uppercase text-xs flex items-center justify-center h-full w-full"
+                  onClick={openLoginModel}
+                >
+                  Đăng nhập
+                </span>
+              </div>
+            )}
+          </div>
         </div>
         <div
-          className={` absolute duration-500 h-full w-full ${
-            isMenu ? "left-0" : "left-[-100%]"
+          className={`z-20 fixed bg-white h-full w-full duration-500  ${
+            isMenu ? "left-0" : "-left-full"
           }`}
         >
-          <Navbar active={navActive} />
+          {/* Serach Bar */}
+          <div className="w-full relative h-[65px] p-3">
+            <input
+              type="text"
+              name="search"
+              placeholder="Nhập để tìm kiếm"
+              value={search}
+              onChange={hanleSearch}
+              className="h-full w-full p-4 bg-[#ede3e3] rounded-sm focus:border-pink-500 "
+            />
+            <FiSearch
+              size={20}
+              className="absolute top-[1.2rem] right-[1.5rem] cursor-pointer"
+            />
+          </div>
+          <div>
+            <Navbar active={navActive} />
+          </div>
         </div>
       </header>
       <Model isVisible={showLoginModel || showRegisterModel}>
